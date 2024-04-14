@@ -63,7 +63,7 @@ client.on('messageCreate', async message => {
                 }
             ]
         }
-        const msg = await message.reply({ allowedMentions: { repliedUser: false }, embeds: [embed()], components: [buttons] });
+        const msg = await message.reply({ allowedMentions: { repliedUser: false }, embeds: [embedf()], components: [buttons] });
         const collector = msg.createMessageComponentCollector({ time: 60000, filter: (i) => i.user.id === message.author.id });
         collector.on('end', () => msg.edit({ components: [] }));
         collector.on('collect', async (interaction) => {
@@ -74,7 +74,7 @@ client.on('messageCreate', async message => {
                 .setFooter({ text: message.author.username, iconURL: message.author.displayAvatarURL() })
                 .setColor(color)
                 .setTimestamp();
-            await interaction.reply({ embeds: [embed], ephemeral: true });
+            await interaction.reply({ embeds: [embed], ephemeral: false });
                 const filter = (m) => m.author.id === message.author.id;
                 const collector = message.channel.createMessageCollector({ time: 60000, filter });
                 collector.on('collect', async (m) => {
@@ -82,7 +82,7 @@ client.on('messageCreate', async message => {
                     database[message.guild.id] = guildData;
                     writeFileSync('./data.db', JSON.stringify(database));
                     collector.stop();
-                    msg.edit({ embeds: [embed()], components: [buttons] });
+                    msg.edit({ embeds: [embedf()], components: [buttons] });
                     interaction.deleteReply();
                     m.delete();
                 });
@@ -94,16 +94,16 @@ client.on('messageCreate', async message => {
                 .setFooter({ text: message.author.username, iconURL: message.author.displayAvatarURL() })
                 .setColor(color)
                 .setTimestamp();
-            await interaction.reply({ embeds: [embed], ephemeral: true });
+            await interaction.reply({ embeds: [embed], ephemeral: false });
                 const filter = (m) => m.author.id === message.author.id;
                 const collector = message.channel.createMessageCollector({ time: 60000, filter });
                 collector.on('collect', async (m) => {
                     const role = m.mentions.roles.first() || message.guild.roles.cache.get(m.content) || message.guild.roles.cache.find(r => r.name.toLowerCase().includes(m.content.toLowerCase()));
-                    if (!role) return error(m, 'Rôle introuvable', interaction)
+                    if (!role) return error(m, 'Role not found please provide a valid role', interaction)
                     guildData.role = role.id
                     database[message.guild.id] = guildData;
                     writeFileSync('./data.db', JSON.stringify(database));
-                    msg.edit({ embeds: [embed()], components: [buttons] });
+                    msg.edit({ embeds: [embedf()], components: [buttons] });
                     collector.stop();
                     interaction.deleteReply();
                     m.delete();
@@ -118,17 +118,17 @@ client.on('messageCreate', async message => {
                 }, 2500)
             })
         }
-        function embed() {
+        function embedf() {
             return {
                 title: '`🪄` ▸ Soutien Setup',
                 fields: [
                     {
                         name: 'Message',
-                        value: `\`${guildData.message || 'No messages defined'}\``
+                        value: `\`${guildData.message || '*No messages defined*'}\``
                     },
                     {
                         name: 'Role',
-                        value: `${guildData.role ? `<@&${guildData.role}>` : 'No role defined'}`
+                        value: `${guildData.role ? `<@&${guildData.role}>` : '*No role defined*'}`
                     }
                 ],
                 footer: {
