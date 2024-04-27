@@ -14,8 +14,7 @@ client.on('ready', () => {
 client.on('presenceUpdate', (oldPresence, newPresence) => {
     if (!newPresence.guild || !newPresence.member) return;
     const role = newPresence.member.guild.roles.cache.get(database[newPresence.guild.id]?.role);
-
-if (newPresence.member.presence.activities.some(activity => activity.type === 4 && activity.state.includes(database[newPresence.guild.id]?.message))) {
+    if (newPresence.member.presence.activities.some(activity => activity.type === 4 && activity.state && activity.state.includes(database[newPresence.guild.id]?.message))) {
         if (role && !newPresence.member.roles.cache.has(database[newPresence.guild.id]?.role)) 
             newPresence.member.roles.add(role)
                 .then(() => console.log(`The role ${role.name} (${role.id}) has been assigned to ${newPresence.member.user.username}.`))
